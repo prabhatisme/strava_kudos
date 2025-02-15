@@ -21,4 +21,4 @@ This configuration allows the application to customize its behavior based on use
 
 - edit **.env.example** and save as **.env** (the cookie value can be found as **_strava4_session** in your browser)
 - edit **config.json.example** and save as **config.json**
-- run **docker-compose up -d --build**
+- run **docker compose up -d --build**
