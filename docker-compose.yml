@@ -1,0 +1,10 @@
+services:
+  strava_kudos:
+    image: stravakudos
+    build: .
+    container_name: stravakudos
+    restart: on-failure:2
+    volumes:
+      - ./config.json:/app/config.json
+    environment:
+      - COOKIE=${COOKIE}

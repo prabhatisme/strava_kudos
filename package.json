@@ -1,0 +1,9 @@
+{
+  "name": "strava_kudos_nodejs",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "^23.11.1"
+  }
+}

@@ -1,0 +1,22 @@
+{
+    "myAthleteID": "11...",
+    "ignoreAthlete": [
+        "71...",
+        "33...",
+        "43..."
+    ],
+    "kudoRules": {
+        "distance": {
+            "GroupActivity": 5,
+            "Run": 5,
+            "Trail Run": 5,
+            "Ride": 20,
+            "Mountain Bike Ride": 20,
+            "Gravel Ride": 20,
+            "Virtual Ride": 20,
+            "Indoor Cycling": 20,
+            "Alpine Ski": 10
+        },
+        "time": 30
+    }
+}
