@@ -61,12 +61,12 @@ async function check() {
   await page.goto("https://www.strava.com/dashboard?num_entries=40", {
     timeout: 300000,
     waitUntil: "domcontentloaded",
-  }); // timeout 5 mins
+  });
 
-  await page.waitForSelector("div.feed-ui > div", { visible: true });
+  await page.waitForSelector("div.feature-feed > div", { visible: true });
   console.log("Strava Page loaded");
 
-  let elements = await page.$$("div.feed-ui > div");
+  let elements = await page.$$("div.feature-feed > div");
 
   console.log(`Number of activities: ${elements.length}`);
 
