@@ -1,4 +1,5 @@
 {
+    "_strava4_session": "vj6---",
     "myAthleteID": "11...",
     "ignoreAthlete": [
         "71...",
@@ -6,7 +7,7 @@
         "43..."
     ],
     "kudoRules": {
-        "distance": {
+        "min_distance": {
             "GroupActivity": 5,
             "Run": 5,
             "Trail Run": 5,
@@ -17,6 +18,8 @@
             "Indoor Cycling": 20,
             "Alpine Ski": 10
         },
-        "time": 30
+        "min_time": {
+            "Workout": 45
+        }
     }
 }

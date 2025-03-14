@@ -6,6 +6,8 @@ The project is a Node.js application designed to interact with the Strava Websit
 
 The config.json file is a configuration file for your Strava Kudos Node.js project. It contains settings and rules that the application uses to determine how and when to give kudos to activities. Here is a summary of its contents in the context of the project:
 
+- _strava4_session: This is the cookie value for login purposes (the cookie value can be found as **_strava4_session** in your browser)
+
 - myAthleteID: This is the ID of the authenticated user. The application uses this ID to identify the user's activities and interactions.
 
 - ignoreAthlete: This is a list of athlete IDs that the application should ignore when giving kudos. Activities from these athletes will not receive kudos from the application.
@@ -19,6 +21,5 @@ This configuration allows the application to customize its behavior based on use
 
 ## How to use ⚙️
 
-- edit **.env.example** and save as **.env** (the cookie value can be found as **_strava4_session** in your browser)
 - edit **config.json.example** and save as **config.json**
 - run **docker compose up -d --build**
