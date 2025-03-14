@@ -34,7 +34,9 @@ async function makeRequest(options) {
         const req = https.request(options, (res) => {
             let data = '';
 
-            console.log(`Status Code: ${res.statusCode}`);
+            if (res.statusCode !== 200) {
+                console.log(`Status Code: ${res.statusCode}`);
+            }
 
             res.on('data', (chunk) => {
                 data += chunk;
@@ -98,6 +100,10 @@ async function getActivities(csrfToken, config) {
 
         console.log(`Athlete: ${activityItem.activity.athlete.athleteName}, Activity: ${activityItem.activity.activityName}, Type: ${activityItem.activity.type}, Has Kudoed: ${activityItem.activity.kudosAndComments.hasKudoed}, Stats: ${JSON.stringify(stats)}`);
 
+        if (activityItem.activity.athlete.athleteId === config.myAthleteID) {
+            console.log(`--- It's me 😎`);
+            return;
+        }
         if (activityItem.activity.kudosAndComments.hasKudoed) {
             console.log('--- Already kudoed this activity');
             return;
