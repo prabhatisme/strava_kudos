@@ -4,4 +4,4 @@ services:
     container_name: strava_kudos
     restart: on-failure:2
     volumes:
-      - ./config.json:/config.json
+      - ./config.json:/app/config.json
