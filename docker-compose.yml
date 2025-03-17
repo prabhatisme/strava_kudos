@@ -1,8 +1,8 @@
 services:
   strava_kudos:
-    image: stravakudos
+    image: strava_kudos
     build: .
-    container_name: stravakudos
+    container_name: strava_kudos
     restart: on-failure:2
     volumes:
       - ./config.json:/app/config.json

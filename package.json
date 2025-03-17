@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node main.js"
+  },
+  "dependencies": {
+    "html-entities": "^2.5.2"
   }
 }

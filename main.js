@@ -1,5 +1,6 @@
 import https from 'https';
 import { readFile } from 'fs/promises';
+import { decode } from 'html-entities';
 
 // const STRAVA_COOKIE = '3s35olf0ndd9gcmietdip371tgvmd33k';
 let COOKIE_VALUE = '';
@@ -16,8 +17,10 @@ async function main() {
 
         setCookieValue(config._strava4_session);
         const csrfToken = await getCsrfToken();
-        const activities = await getActivities(csrfToken, config);
-        await sendKudos(csrfToken, activities);
+        // const activities = await getActivitiesViaFeedURL(csrfToken, config.myAthleteID);
+        const activities = await getActivitiesViaDashboard(csrfToken, config.myAthleteID);
+        const filteredActivities = filterActivities(activities, config);
+        await sendKudos(csrfToken, filteredActivities);
     } catch (error) {
         console.error(error);
     }
@@ -78,10 +81,58 @@ async function getCsrfToken() {
     }
 }
 
-async function getActivities(csrfToken, config) {
+async function getActivitiesViaDashboard(csrfToken, myAthleteID) {
     const options = {
         hostname: 'www.strava.com',
-        path: `/dashboard/feed?feed_type=following&athlete_id=${config.myAthleteID}&num_entries=40`,
+        path: '/dashboard?num_entries=60',
+        method: 'GET',
+        headers: {
+            'Cookie': COOKIE_VALUE,
+            'x-csrf-token': csrfToken,
+        },
+    };
+
+    const data = await makeRequest(options);
+
+    const reactPropsMatches = [...data.matchAll(/data-react-props='([^']+)'/g)].map((match) => match[1]);
+
+    let activities = [];
+    reactPropsMatches.forEach((match) => {
+        const reactProps = JSON.parse(decode(match));
+        const entries = reactProps?.appContext?.feedProps?.preFetchedEntries || [];
+        entries.forEach((entry) => {
+            if (entry.entity === 'Activity') {
+                activities.push(entry.activity);
+            } else if (entry.entity === 'GroupActivity') {
+                activities.push(...entry.rowData.activities.map(tranformGroupActivity));
+            }
+        });
+    });
+
+    if (activities.length === 0) throw new Error('No activities found');
+
+    console.log(`Number of activities: ${activities.length}`);
+    return activities;
+}
+
+function tranformGroupActivity(activity) {
+    return {
+        ...activity,
+        activityName: activity.name,
+        id: activity.activity_id,
+        athlete: {
+            athleteId: activity.athlete_id,
+            athleteName: activity.athlete_name,
+        },
+        kudosAndComments: {
+            hasKudoed: activity.has_kudoed,
+        },
+    };
+}
+async function getActivitiesViaFeedURL(csrfToken, myAthleteID) {
+    const options = {
+        hostname: 'www.strava.com',
+        path: `/dashboard/feed?feed_type=following&athlete_id=${myAthleteID}&num_entries=40`,
         method: 'GET',
         headers: {
             'Cookie': COOKIE_VALUE,
@@ -94,25 +145,29 @@ async function getActivities(csrfToken, config) {
     const activities = feed.entries.filter((entry) => entry.entity === 'Activity');
     console.log(`Number of activities: ${activities.length}`);
 
+    return activities;
+}
+
+function filterActivities(activities, config) {
     let filteredActivities = [];
     activities.forEach((activityItem) => {
         const stats = extractActivityStats(activityItem);
 
-        console.log(`Athlete: ${activityItem.activity.athlete.athleteName}, Activity: ${activityItem.activity.activityName}, Type: ${activityItem.activity.type}, Has Kudoed: ${activityItem.activity.kudosAndComments.hasKudoed}, Stats: ${JSON.stringify(stats)}`);
+        console.log(`Athlete: ${activityItem.athlete.athleteName}, ActivityName: ${activityItem.activityName}, Type: ${activityItem.type}, Has Kudoed: ${activityItem.kudosAndComments.hasKudoed}, Stats: ${JSON.stringify(stats)}`);
 
-        if (activityItem.activity.athlete.athleteId === config.myAthleteID) {
+        if (activityItem.athlete.athleteId === config.myAthleteID) {
             console.log(`--- It's me 😎`);
             return;
         }
-        if (activityItem.activity.kudosAndComments.hasKudoed) {
+        if (activityItem.kudosAndComments.hasKudoed) {
             console.log('--- Already kudoed this activity');
             return;
         }
-        if (config.ignoreAthlete && config.ignoreAthlete.includes(activityItem.activity.athlete.athleteId)) {
+        if (config.ignoreAthlete && config.ignoreAthlete.includes(activityItem.athlete.athleteId)) {
             console.log('--- Athlete to be ignored');
             return;
         }
-        if (config.kudoRules && noKudosForStats(stats, activityItem.activity.type, activityItem.activity.activityName, config.kudoRules)) {
+        if (config.kudoRules && noKudosForStats(stats, activityItem.type, activityItem.activityName, config.kudoRules)) {
             console.log('/// Activity stats do not meet criteria');
             return;
         }
@@ -156,10 +211,10 @@ function noKudosForStats(stats, activityType, activityName, kudoRules) {
 
 function extractActivityStats(activityItem) {
     const stats = {};
-    activityItem.activity.stats.forEach((stat) => {
+    activityItem.stats.forEach((stat) => {
         const subtitleKey = `${stat.key}_subtitle`;
         let subtitle;
-        for (const s of activityItem.activity.stats) {
+        for (const s of activityItem.stats) {
             if (s.key === subtitleKey) {
                 subtitle = s.value;
                 break;
