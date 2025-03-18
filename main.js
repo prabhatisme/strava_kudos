@@ -155,7 +155,7 @@ function filterActivities(activities, config) {
 
         console.log(`Athlete: ${activityItem.athlete.athleteName}, ActivityName: ${activityItem.activityName}, Type: ${activityItem.type}, Has Kudoed: ${activityItem.kudosAndComments.hasKudoed}, Stats: ${JSON.stringify(stats)}`);
 
-        if (activityItem.athlete.athleteId === config.myAthleteID) {
+        if (activityItem.athlete.athleteId == config.myAthleteID) {
             console.log(`--- It's me 😎`);
             return;
         }
@@ -243,7 +243,7 @@ async function sendKudos(csrfToken, activities) {
     for (const activityItem of activities) {
         const options = {
             hostname: 'www.strava.com',
-            path: `/feed/activity/${activityItem.activity.id}/kudo`,
+            path: `/feed/activity/${activityItem.id}/kudo`,
             method: 'POST',
             headers: {
                 'Cookie': COOKIE_VALUE,
@@ -251,7 +251,7 @@ async function sendKudos(csrfToken, activities) {
             },
         };
 
-        console.log(`Sending kudos to activity: ${activityItem.activity.id}: ${activityItem.activity.athlete.athleteName} - ${activityItem.activity.activityName}`);
+        console.log(`Sending kudos to activity: ${activityItem.id}: ${activityItem.athlete.athleteName} - ${activityItem.activityName}`);
 
         const data = await makeRequest(options);
         console.log('Response:', data);
