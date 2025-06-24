@@ -23,7 +23,7 @@ jobs:
 
       - name: Create config.json from secret
         run: |
-          echo '${{ secrets.STRAVA_CONFIG_JSON }}' > app/config.json      
+          echo '${{ secrets.STRAVA_CONFIG_JSON }}' > config.json      
         
       - name: Run Strava Kudos script
         run: node main.js
