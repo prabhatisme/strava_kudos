@@ -3,7 +3,7 @@ name: Strava Kudos Daily
 on:
   schedule:
     - cron: '30 6 * * *'  # Runs every day at 6:00 UTC
-  workflow_dispatch:      # Allows manual trigger
+  workflow_dispatch:      # Allows manual trigger new
 
 jobs:
   kudos:
@@ -23,7 +23,7 @@ jobs:
 
       - name: Create config.json from secret
         run: |
-          echo '${{ secrets.STRAVA_CONFIG_JSON }}' > app/config.json
+          echo '${{ secrets.STRAVA_CONFIG_JSON }}' > app/config.json      
         
       - name: Run Strava Kudos script
         run: node main.js
