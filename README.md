@@ -1,3 +1,5 @@
+[![Strava Kudos Daily](https://github.com/prabhatisme/strava_kudos/actions/workflows/strava-kudos.yml/badge.svg)](https://github.com/prabhatisme/strava_kudos/actions/workflows/strava-kudos.yml)
+
 # Strava Kudos 👍
 
 The project is a Node.js application designed to interact with the Strava Website to automate the process of giving kudos to activities.
