@@ -1,0 +1,29 @@
+name: Strava Kudos Daily
+
+on:
+  schedule:
+    - cron: '30 6 * * *'  # Runs every day at 6:00 UTC
+  workflow_dispatch:      # Allows manual trigger
+
+jobs:
+  kudos:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create config.json from secret
+        run: |
+          echo '${{ secrets.STRAVA_CONFIG_JSON }}' > app/config.json
+        
+      - name: Run Strava Kudos script
+        run: node main.js
